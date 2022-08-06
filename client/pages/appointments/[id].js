@@ -39,6 +39,10 @@ export default function Appointment({ appointment }) {
                 'Content-Type': 'application/json'
             }
         })
+        if("msg" in res.data){
+            console.log(res.data["msg"]);
+            return
+        }
 
         window.location.replace("http://localhost:3000/appointments")
     }

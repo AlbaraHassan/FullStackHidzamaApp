@@ -1,11 +1,10 @@
-import  Router  from "next/router"
+import Router from "next/router"
 import { useEffect } from "react";
 
 export default function Home() {
     useEffect(() => {
-        
-          Router.push("/appointments");
-        
-      },[]);
+        Router.push("/appointments");
+
+    }, []);
     return <></>
 }

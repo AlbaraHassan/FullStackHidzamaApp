@@ -55,6 +55,7 @@ class Appointment(models.Model):  # MANY
         try:
             print(self.year, self.month, self.day,
                           self.hour, self.minute)
+
             validate_date(self.year, self.month, self.day,
                           self.hour, self.minute)
 

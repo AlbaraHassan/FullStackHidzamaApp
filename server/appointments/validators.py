@@ -4,6 +4,7 @@ from .codes import data
 
 
 def validate_age(age):
+    
     if age < 0:
         raise Exception("Age is not acceptable!")
 

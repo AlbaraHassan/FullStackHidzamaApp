@@ -27,7 +27,7 @@ export default function Appointments({ appointments }) {
         {
             appointments.map((a) => {
                 const { isOpen, onOpen, onClose } = useDisclosure();
-                return <GridItem as={"button"} w={"100%"} onClick={isOpen ? onClose : onOpen}>
+                return <GridItem as={"button"} w={"100%"} onClick={isOpen ? onClose : onOpen}key={a.id}>
                     <Modal isOpen={isOpen} onClose={onClose} motionPreset={"scale"}>
                         <ModalOverlay />
                         <ModalContent>
@@ -48,7 +48,7 @@ export default function Appointments({ appointments }) {
                         </ModalContent>
                     </Modal>
                     <Box h={"100%"} fontSize={"150%"} borderRadius={"md"} bg={"tomato"} color={"white"} p={5} justifyContent={"center"} key={a.id} display={"flex"}>
-                        <div class="text">
+                        <div className="text">
                             <p>DATE: {a[ "day" ]} / {a[ "month" ]} / {a[ "year" ]}</p>
                             <br />
                             <p>DAY: {a["name"]}</p>
