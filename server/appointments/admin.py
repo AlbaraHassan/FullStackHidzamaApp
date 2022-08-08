@@ -13,15 +13,16 @@ class PatientAdmin(admin.ModelAdmin):
 
 class AppointmentForm(forms.ModelForm):
 
-    
-    model = Appointment
+    class Meta:
+        model = Appointment
+        fields = "__all__"
 
     def clean(self):
         try:
             validate_date(self.year, self.month, self.day,
                           self.hour, self.minute)
-        except:
-            raise forms.ValidationError("Date is not valid!")
+        except Exception as e:
+            raise forms.ValidationError(e.args[0])
 
 
 class AppointmentAdmin(admin.ModelAdmin):

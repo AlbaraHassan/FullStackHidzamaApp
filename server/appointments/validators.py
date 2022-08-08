@@ -1,10 +1,10 @@
+from rest_framework.response import Response
 import datetime
 import phonenumbers
 from .codes import data
 
 
 def validate_age(age):
-    
     if age < 0:
         raise Exception("Age is not acceptable!")
 
@@ -27,4 +27,6 @@ def validate_phone(phone_number):
 
 def validate_date(year, month, day, hour, minute):
     if datetime.datetime(year,month,day,hour,minute) < datetime.datetime.now():
-        raise Exception("Date is not allowed!")
+        return Response({"msg":"Date is not allowed!"})
+    
+    return None
