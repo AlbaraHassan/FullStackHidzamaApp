@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 import datetime
 import phonenumbers
 from .codes import data

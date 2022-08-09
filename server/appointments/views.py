@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Appointment, Patient
 from .serializers import AppointmentSerializer, PatientSerializer
-from .validators import validate_age, validate_date, validate_phone
+from .validators import validate_date, validate_phone
 from django.core.mail import send_mail
 
 

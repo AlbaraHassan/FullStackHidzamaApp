@@ -1,7 +1,5 @@
 from datetime import datetime, date
-from pyexpat import model
 from django.db import models
-from django.core.validators import RegexValidator
 from .validators import validate_age, validate_date, validate_phone
 
 # Create your models here.
@@ -52,7 +50,7 @@ class Appointment(models.Model):  # MANY
     hour = models.IntegerField(choices=((i,str(i)) for i in range(24)), default=0)
     minute = models.IntegerField(choices=((i,str(i)) for i in range(60)),default=0)
     name = models.CharField(max_length=10, blank=True)
-    reason = models.CharField(choices=((i,i) for i in REASONS), max_length=64, blank=True, null=True, default=REASONS[0])
+    reason = models.CharField(choices=((i,i) for i in REASONS), max_length=64, blank=True, null=True)
     is_free = models.BooleanField(default=True)
     is_approved = models.BooleanField(default=False)
     patient = models.ForeignKey(
@@ -80,7 +78,10 @@ class Appointment(models.Model):  # MANY
         return getattr(self, key)
 
     def __str__(self):
-        if self.is_free:
-            return f"{self.name}, {self.day} / {self.month} / {self.year}, {self.hour}:{self.minute}"
 
-        return f"{self.name}, {self.day} / {self.month} / {self.year}, {self.hour}:{self.minute} -> {self.patient.name}"
+        zero = lambda x : "0" + str(x) if x < 10 else x
+
+        if self.is_free:
+            return f"{self.name}, {zero(self.day)} / {zero(self.month)} / {self.year}, {zero(self.hour)}:{zero(self.minute)}"
+
+        return f"{self.name}, {zero(self.day)} / {zero(self.month)} / {self.year}, {zero(self.hour)}:{zero(self.minute)} -> {self.patient.name}"
