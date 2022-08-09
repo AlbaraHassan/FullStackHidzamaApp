@@ -1,4 +1,4 @@
-from rest_framework.response import Response
+from django.core.exceptions import ValidationError
 import datetime
 import phonenumbers
 from .codes import data
@@ -27,6 +27,4 @@ def validate_phone(phone_number):
 
 def validate_date(year, month, day, hour, minute):
     if datetime.datetime(year,month,day,hour,minute) < datetime.datetime.now():
-        return Response({"msg":"Date is not allowed!"})
-    
-    return None
+        raise Exception("Date is not allowed!")

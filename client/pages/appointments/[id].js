@@ -1,4 +1,4 @@
-import { Box, Button, Divider, FormControl, FormHelperText, FormLabel, Input, Text } from "@chakra-ui/react";
+import { Alert, AlertTitle, Box, Button, Divider, FormControl, FormHelperText, FormLabel, Input, Select, Text, useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import axios from "axios"
 import DatePicker from "react-datepicker";
@@ -7,7 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 export async function getServerSideProps(context) {
 
-    const res = await axios.get(`http://localhost:8000/appointments/get_app/?id=${context.params[ "id" ]}`)
+    const res = await axios.get(`http://localhost:8000/appointments/get_app/${context.params[ "id" ]}/`)
     const data = res.data
     return {
         props: { appointment: data }
@@ -20,35 +20,45 @@ export default function Appointment({ appointment }) {
     const [ name, setname ] = useState("")
     const [ phone, setphone ] = useState("")
     const [ age, setAge ] = useState()
-    const [startDate, setStartDate] = useState(new Date());
-
+    const [ startDate, setStartDate ] = useState(new Date());
+    const [ reason, setReason ] = useState("General")
+    const toast = useToast();
 
     const handleSubmit = async () => {
         const body = {
             "name": name,
-            "date_of_birth": startDate.toJSON().split("T")[0],
+            "date_of_birth": startDate.toJSON().split("T")[ 0 ],
             "phone_number": phone,
+            "reason": reason
         }
         console.log(body);
 
 
-        const res = await axios.post(`http://localhost:8000/appointments/reserve/?id=${appointment[ "id" ]}`,
+        const res = await axios.post(`http://localhost:8000/appointments/reserve/${appointment[ "id" ]}/`,
             body, {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
         })
-        if("msg" in res.data){
-            console.log(res.data["msg"]);
+        if ("msg" in res.data) {
+            toast({
+                title: res.data["msg"],
+                status: "error",
+                duration: 9000,
+                isClosable: true,
+              })
             return
         }
 
         window.location.replace("http://localhost:3000/appointments")
     }
 
+    
 
     return <>
+
+
         <Text>DAY : {appointment[ "day" ]} {"->"} {appointment[ "name" ]}</Text>
         <Text>MONTH : {appointment[ "month" ] + 1}</Text>
         <Text>TIME : {appointment[ "hour" ] < 10 ? "0" + appointment[ "hour" ] : appointment[ "hour" ]}:{appointment[ "minute" ] < 10 ? "0" + appointment[ "minute" ] : appointment[ "minute" ]}</Text>
@@ -66,6 +76,22 @@ export default function Appointment({ appointment }) {
                 <FormLabel>Phone Number</FormLabel>
                 <Input bg={"white"} onChange={(e) => { setphone(e.target.value) }} />
                 <FormHelperText marginBlockEnd={50}>Enter Phone Number.</FormHelperText>
+                <Divider w={"50%"} m={"50"} />
+
+                <FormLabel>Reason For Appointment</FormLabel>
+                <Select placeholder="Select Reason" variant={"filled"} bg={"white"} onChange={(e) => { setReason(e.target.value) }}>
+                    <option value="General">General</option>
+                    <option value="Respiratory System">Respiratory System</option>
+                    <option value="Bones and Joints">Bones and Joints</option>
+                    <option value="Heart and Blood Vessels">Heart and Blood Vessels</option>
+                    <option value="Female Problems">Female Problems</option>
+                    <option value="Urinary System">Urinary System</option>
+                    <option value="Nerves and Muscles">Nerves and Muscles</option>
+                    <option value="Immunity and Blood Booster">Immunity and Blood Booster</option>
+                    <option value="Hormones">Hormones</option>
+                    <option value="Other">Other</option>
+                </Select>
+                <FormHelperText marginBlockEnd={50}>Select Reason.</FormHelperText>
                 <Button bg={"linkedin.400"} onClick={handleSubmit}>Submit</Button>
                 <Divider w={"50%"} m={"50"} />
             </FormControl>

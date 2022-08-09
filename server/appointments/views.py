@@ -20,9 +20,8 @@ def get_reserved(req): # GET all reserved appointments
     return Response(serializer.data)
 
 @api_view(["GET"])
-def get_appointment(req):  # GET a specific appointment
-    date_id = req.query_params["id"]
-    dt = Appointment.objects.get(**{"id": date_id})
+def get_appointment(req, pk):  # GET a specific appointment
+    dt = Appointment.objects.get(**{"id": pk})
     serializer = AppointmentSerializer(dt)
     return Response(serializer.data)
 
@@ -31,7 +30,7 @@ def get_appointment(req):  # GET a specific appointment
 
 @api_view(["POST"])
 def post_date(req):  # POST new free appointment
-    try:
+    try:   
         date = req.data
         validate_date(**date)
         date_object = datetime(
@@ -48,13 +47,13 @@ def post_date(req):  # POST new free appointment
 
 @api_view(["POST"])
 # POST new patient if does not already exists, and reserve appointment
-def post_appointment(req):
+def post_appointment(req, pk):
     try:
         patient = req.data
-
+        reason = patient["reason"]
+        del patient["reason"]
         validate_phone(patient["phone_number"])
-
-        date_id = req.query_params["id"]
+        
 
 
         if Patient.objects.filter(name=patient["name"], phone_number=patient["phone_number"]).exists():
@@ -64,12 +63,13 @@ def post_appointment(req):
             p = Patient.objects.get(
                 **{"name": patient["name"], "phone_number": patient["phone_number"]})
             p["date_of_birth"] = patient["date_of_birth"]
-            date = Appointment.objects.get(**{"id": date_id})
+            date = Appointment.objects.get(**{"id": pk})
 
             if date["is_free"] == False:
                 raise Exception("Appointment is not free !!!")
 
             date["is_free"] = False
+            date["reason"] = reason
             date["patient"] = p
             p.save()
             date.save()
@@ -89,12 +89,13 @@ def post_appointment(req):
 
         p = Patient.objects.create(**patient)
 
-        date = Appointment.objects.get(**{"id": date_id})
+        date = Appointment.objects.get(**{"id": pk})
 
         if date["is_free"] == False:
             raise Exception("Appointment is not free !!!")
 
         date["is_free"] = False
+        date["reason"] = reason
         date["patient"] = p
 
         p.save()
@@ -121,15 +122,14 @@ def post_appointment(req):
 
 
 @api_view(["PATCH"])
-def admin_approve(req):  # PATCH for appointment approval
-    date_id = req.query_params["id"]
-    date = Appointment.objects.get(**{"id": date_id})
+def admin_approve(req, pk):  # PATCH for appointment approval
+    date = Appointment.objects.get(**{"id": pk})
     serlializer = AppointmentSerializer(date)
 
     if serlializer.data["is_free"] is True:
         raise Exception("Cannot approve appointments that are free!")
 
-    date = Appointment.objects.get(**{"id": date_id})
+    date = Appointment.objects.get(**{"id": pk})
     date["is_approved"] = True
     date.save()
     serlializer = AppointmentSerializer(date)

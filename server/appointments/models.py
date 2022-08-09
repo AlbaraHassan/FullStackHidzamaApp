@@ -23,6 +23,10 @@ class Patient(models.Model):  # ONE
         if type(self.date_of_birth) is str:
             dt = [int(i) for i in self.date_of_birth.split("-")]
             dt = date(*dt)
+            self.age = today.year - dt.year - \
+            ((today.month, today.day) <
+             (dt.month, dt.day))
+            validate_age(self.age)
         else:
             dt = self.date_of_birth
         self.age = today.year - dt.year - \
@@ -48,7 +52,7 @@ class Appointment(models.Model):  # MANY
     hour = models.IntegerField(choices=((i,str(i)) for i in range(24)), default=0)
     minute = models.IntegerField(choices=((i,str(i)) for i in range(60)),default=0)
     name = models.CharField(max_length=10, blank=True)
-    reason = models.CharField(choices=((i,i) for i in REASONS), max_length=64, blank=True, null=True)
+    reason = models.CharField(choices=((i,i) for i in REASONS), max_length=64, blank=True, null=True, default=REASONS[0])
     is_free = models.BooleanField(default=True)
     is_approved = models.BooleanField(default=False)
     patient = models.ForeignKey(
@@ -59,6 +63,7 @@ class Appointment(models.Model):  # MANY
 
             validate_date(self.year, self.month, self.day,
                           self.hour, self.minute)
+
 
             self.name = datetime(self.year, self.month, self.day,
                                  self.hour, self.minute).strftime("%A")
