@@ -82,6 +82,6 @@ class Appointment(models.Model):  # MANY
         zero = lambda x : "0" + str(x) if x < 10 else x
 
         if self.is_free:
-            return f"{self.name}, {zero(self.day)} / {zero(self.month)} / {self.year}, {zero(self.hour)}:{zero(self.minute)}"
+            return f"{self.name} [{zero(self.day)} / {zero(self.month)} / {self.year}] -> {zero(self.hour)}:{zero(self.minute)}"
 
-        return f"{self.name}, {zero(self.day)} / {zero(self.month)} / {self.year}, {zero(self.hour)}:{zero(self.minute)} -> {self.patient.name}"
+        return f"{self.name}, [{zero(self.day)} / {zero(self.month)} / {self.year}] -> {zero(self.hour)}:{zero(self.minute)} -> {self.patient.name}"

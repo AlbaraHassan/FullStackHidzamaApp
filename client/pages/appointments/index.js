@@ -23,11 +23,11 @@ export default function Appointments({ appointments }) {
     
 
 
-    return <Grid justifyContent={"center"} templateColumns='repeat(5, 1fr)' gap={10} m={20}>
+    return <Grid justifyContent={"center"} templateColumns='repeat(5, 1fr)' gap={10} m={20}  >
         {
             appointments.map((a) => {
                 const { isOpen, onOpen, onClose } = useDisclosure();
-                return <GridItem as={"button"} w={"100%"} onClick={isOpen ? onClose : onOpen}key={a.id}>
+                return <GridItem as={"button"}  onClick={isOpen ? onClose : onOpen}key={a.id} >
                     <Modal isOpen={isOpen} onClose={onClose} motionPreset={"scale"}>
                         <ModalOverlay />
                         <ModalContent>
@@ -47,7 +47,7 @@ export default function Appointments({ appointments }) {
                             </ModalFooter>
                         </ModalContent>
                     </Modal>
-                    <Box h={"100%"} fontSize={"150%"} borderRadius={"md"} bg={"tomato"} color={"white"} p={5} justifyContent={"center"} key={a.id} display={"flex"}>
+                    <Box h={"100%"} fontSize={"150%"} borderRadius={"md"} bg={"tomato"} color={"white"} p={5} justifyContent={"center"} key={a.id} display={"flex"}  >
                         <div className="text">
                             <p>DATE: {a[ "day" ]} / {a[ "month" ]} / {a[ "year" ]}</p>
                             <br />

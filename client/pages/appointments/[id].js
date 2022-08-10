@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Box, Button, Divider, FormControl, FormHelperText, FormLabel, Input, Select, Text, useToast } from "@chakra-ui/react";
+import { Alert, AlertTitle, Box, Button, Divider, FormControl, FormHelperText, FormLabel, Input, Select, Tag, Text, useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import axios from "axios"
 import DatePicker from "react-datepicker";
@@ -19,7 +19,6 @@ export default function Appointment({ appointment }) {
 
     const [ name, setname ] = useState("")
     const [ phone, setphone ] = useState("")
-    const [ age, setAge ] = useState()
     const [ startDate, setStartDate ] = useState(new Date());
     const [ reason, setReason ] = useState("General")
     const toast = useToast();
@@ -43,25 +42,35 @@ export default function Appointment({ appointment }) {
         })
         if ("msg" in res.data) {
             toast({
-                title: res.data["msg"],
+                title: res.data[ "msg" ],
                 status: "error",
                 duration: 9000,
-                isClosable: true,
-              })
+                isClosable: false,
+            })
             return
         }
 
-        window.location.replace("http://localhost:3000/appointments")
+        toast({
+            title: "Reserved Succesfully",
+            status: "success",
+            duration: 3000,
+            isClosable: false,
+        })
+
+        setTimeout(() => {
+            window.location.replace("http://localhost:3000/appointments")
+        }, 3000);
+
     }
 
-    
+
 
     return <>
 
+            <Tag m={10} size={"lg"}>DAY : {appointment[ "day" ]} {"->"} {appointment[ "name" ]}</Tag>
+            <Tag m={10} size={"lg"}>MONTH : {appointment[ "month" ] + 1}</Tag>
+            <Tag m={10} size={"lg"}>TIME : {appointment[ "hour" ] < 10 ? "0" + appointment[ "hour" ] : appointment[ "hour" ]}:{appointment[ "minute" ] < 10 ? "0" + appointment[ "minute" ] : appointment[ "minute" ]}</Tag>
 
-        <Text>DAY : {appointment[ "day" ]} {"->"} {appointment[ "name" ]}</Text>
-        <Text>MONTH : {appointment[ "month" ] + 1}</Text>
-        <Text>TIME : {appointment[ "hour" ] < 10 ? "0" + appointment[ "hour" ] : appointment[ "hour" ]}:{appointment[ "minute" ] < 10 ? "0" + appointment[ "minute" ] : appointment[ "minute" ]}</Text>
         <Divider m={50} w={"95%"} />
         <Box display={"flex"} justifyContent={"center"} bg={"blackAlpha.200"} p={10} w={"60%"} marginLeft={425} borderRadius={"xl"}>
             <FormControl w={"60%"}>
@@ -73,8 +82,8 @@ export default function Appointment({ appointment }) {
                 <DatePicker selected={startDate} onSelect={(date) => setStartDate(date)} />
                 <FormHelperText marginBlockEnd={50}>Choose Your Date of Birth.</FormHelperText>
 
-                <FormLabel>Phone Number</FormLabel>
-                <Input bg={"white"} onChange={(e) => { setphone(e.target.value) }} />
+                <FormLabel >Phone Number</FormLabel>
+                <Input isRequired bg={"white"} onChange={(e) => { setphone(e.target.value) }} />
                 <FormHelperText marginBlockEnd={50}>Enter Phone Number.</FormHelperText>
                 <Divider w={"50%"} m={"50"} />
 
