@@ -1,5 +1,5 @@
 from datetime import datetime
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, APIView
 from rest_framework.response import Response
 from .models import Appointment, Patient
 from .serializers import AppointmentSerializer, PatientSerializer
@@ -7,62 +7,72 @@ from .validators import validate_date, validate_phone
 from django.core.mail import send_mail
 
 
-@api_view(["GET"])
-def get_all_free(req):  # GET all free appointments
-    data = Appointment.objects.filter(**{"is_free": True})
-    serializer = AppointmentSerializer(data, many=True)
-    return Response(serializer.data)
-
-@api_view(["GET"])
-def get_reserved(req): # GET all reserved appointments
-    data = Appointment.objects.filter(**{"is_free": False})
-    serializer = AppointmentSerializer(data, many=True)
-    return Response(serializer.data)
-
-@api_view(["GET"])
-def get_appointment(req, pk):  # GET a specific appointment
-    dt = Appointment.objects.get(**{"id": pk})
-    serializer = AppointmentSerializer(dt)
-    return Response(serializer.data)
 
 
-
-
-@api_view(["POST"])
-def post_date(req):  # POST new free appointment
-    try:   
-        date = req.data
-        validate_date(**date)
-        date_object = datetime(
-            year=date["year"], month=date["month"], day=date["day"])
-        date["name"] = date_object.strftime("%A")
-        app = Appointment.objects.create(**date)
-        app.save()
-        serializer = AppointmentSerializer(app)
-        
+class ListFreeView(APIView):
+    def get(self, res):
+        data = Appointment.objects.filter(**{"is_free": True})
+        serializer = AppointmentSerializer(data, many=True)
+        return Response(serializer.data)
+    
+class ListReservedView(APIView):
+    def get(self,res):
+        data = Appointment.objects.filter(**{"is_free": False})
+        serializer = AppointmentSerializer(data, many=True)
         return Response(serializer.data)
 
-    except Exception as e:
-        return Response({"msg": e.args[0]})
 
-@api_view(["POST"])
-# POST new patient if does not already exists, and reserve appointment
-def post_appointment(req, pk):
-    try:
-        patient = req.data
-        reason = patient["reason"]
-        del patient["reason"]
-        validate_phone(patient["phone_number"])
-        
-
-
-        if Patient.objects.filter(name=patient["name"], phone_number=patient["phone_number"]).exists():
+class AppointmentView(APIView):
+    def get(self, res, pk):
+        dt = Appointment.objects.get(**{"id": pk})
+        serializer = AppointmentSerializer(dt)
+        return Response(serializer.data)
 
 
 
-            p = Patient.objects.get(
-                **{"name": patient["name"], "phone_number": patient["phone_number"]})
-            p["date_of_birth"] = patient["date_of_birth"]
+class ReserveView(APIView):
+    def post(self,req, pk):
+        try:
+            patient = req.data
+            reason = patient["reason"]
+            del patient["reason"]
+            validate_phone(patient["phone_number"])
+            
+
+
+            if Patient.objects.filter(name=patient["name"], phone_number=patient["phone_number"]).exists():
+
+
+
+                p = Patient.objects.get(
+                    **{"name": patient["name"], "phone_number": patient["phone_number"]})
+                p["date_of_birth"] = patient["date_of_birth"]
+                date = Appointment.objects.get(**{"id": pk})
+
+                if date["is_free"] == False:
+                    raise Exception("Appointment is not free !!!")
+
+                date["is_free"] = False
+                date["reason"] = reason
+                date["patient"] = p
+                p.save()
+                date.save()
+
+                serializer = PatientSerializer(p)
+                date = datetime(date["year"], date["month"],
+                                date["day"], date["hour"], date["minute"])
+                send_mail(
+                f'New Reservation by {serializer.data["name"]}',
+                f'Name: {serializer.data["name"]}\nDate: {date.date()}\nTime:{date.time()}\nAge: {serializer.data["age"]}\nPhone Number: {serializer.data["phone_number"]}\n\nTHE PATIENT HAD AN APPOINTMENT IN THE PAST',
+                'albara.m.hassan@gmail.com',
+                ['braa3300@hotmail.com'],
+                fail_silently=False,
+                )
+
+                return Response(serializer.data)
+
+            p = Patient.objects.create(**patient)
+
             date = Appointment.objects.get(**{"id": pk})
 
             if date["is_free"] == False:
@@ -71,6 +81,7 @@ def post_appointment(req, pk):
             date["is_free"] = False
             date["reason"] = reason
             date["patient"] = p
+
             p.save()
             date.save()
 
@@ -78,59 +89,36 @@ def post_appointment(req, pk):
             date = datetime(date["year"], date["month"],
                             date["day"], date["hour"], date["minute"])
             send_mail(
-            f'New Reservation by {serializer.data["name"]}',
-            f'Name: {serializer.data["name"]}\nDate: {date.date()}\nTime:{date.time()}\nAge: {serializer.data["age"]}\nPhone Number: {serializer.data["phone_number"]}\n\nTHE PATIENT HAD AN APPOINTMENT IN THE PAST',
-            'albara.m.hassan@gmail.com',
-            ['braa3300@hotmail.com'],
-            fail_silently=False,
+                f'New Reservation by {serializer.data["name"]}',
+                f'Name: {serializer.data["name"]}\nDate: {date}\nTime:{date.time()}\nAge: {serializer.data["age"]}\nPhone Number: {serializer.data["phone_number"]}',
+                'albara.m.hassan@gmail.com',
+                ['braa3300@hotmail.com'],
+                fail_silently=False,
             )
 
             return Response(serializer.data)
 
-        p = Patient.objects.create(**patient)
+        except Exception as e:
+            if "duplicate key value" in e.args[0]:
+                return Response({"msg":"Phone number is used!"})
 
-        date = Appointment.objects.get(**{"id": pk})
-
-        if date["is_free"] == False:
-            raise Exception("Appointment is not free !!!")
-
-        date["is_free"] = False
-        date["reason"] = reason
-        date["patient"] = p
-
-        p.save()
-        date.save()
-
-        serializer = PatientSerializer(p)
-        date = datetime(date["year"], date["month"],
-                        date["day"], date["hour"], date["minute"])
-        send_mail(
-            f'New Reservation by {serializer.data["name"]}',
-            f'Name: {serializer.data["name"]}\nDate: {date}\nTime:{date.time()}\nAge: {serializer.data["age"]}\nPhone Number: {serializer.data["phone_number"]}',
-            'albara.m.hassan@gmail.com',
-            ['braa3300@hotmail.com'],
-            fail_silently=False,
-        )
-
-        return Response(serializer.data)
-
-    except Exception as e:
-        if "duplicate key value" in e.args[0]:
-            return Response({"msg":"Phone number is used!"})
-
-        return Response({"msg":e.args[0]})
+            return Response({"msg":e.args[0]})    
 
 
-@api_view(["PATCH"])
-def admin_approve(req, pk):  # PATCH for appointment approval
-    date = Appointment.objects.get(**{"id": pk})
-    serlializer = AppointmentSerializer(date)
+class AddAppointmentView(APIView):
+    def post(self,req):
+        try:   
+            date = req.data
+            validate_date(**date)
+            date_object = datetime(
+                year=date["year"], month=date["month"], day=date["day"])
+            date["name"] = date_object.strftime("%A")
+            app = Appointment.objects.create(**date)
+            app.save()
+            serializer = AppointmentSerializer(app)
+            
+            return Response(serializer.data)
 
-    if serlializer.data["is_free"] is True:
-        raise Exception("Cannot approve appointments that are free!")
+        except Exception as e:
+            return Response({"msg": e.args[0]})
 
-    date = Appointment.objects.get(**{"id": pk})
-    date["is_approved"] = True
-    date.save()
-    serlializer = AppointmentSerializer(date)
-    return Response(serlializer.data)
