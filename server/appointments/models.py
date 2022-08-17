@@ -1,7 +1,9 @@
 from datetime import datetime, date
 from django.db import models
 from .validators import validate_age, validate_date, validate_phone
+import time
 
+from googletrans import Translator
 # Create your models here.
 
 
@@ -23,13 +25,34 @@ class Patient(models.Model):  # ONE
     name = models.CharField(max_length=32)
     date_of_birth = models.DateField()
     age = models.IntegerField(blank=True)
+    height = models.IntegerField()
+    weight = models.IntegerField()
+    bmi = models.FloatField(blank=True)
+
+
     phone_number = models.CharField(unique=True, max_length=16, validators=[
                                     validate_phone])
+
+
+
+    anemia = models.BooleanField(default=False)
+    blood_sugar = models.BooleanField(default=False)
+    kidney_problems = models.BooleanField(default=False)
+    liver_problems = models.BooleanField(default=False)
+    thyroid_problems = models.BooleanField(default=False)
+    heart_problems = models.BooleanField(default=False)
+    other_problems = models.TextField(max_length=264, blank=True, null=True)
                                     
 
     def save(self, *args, **kwargs):
         """Overrides the save method of the model
         """
+        translator = Translator()
+        translation = translator.translate(self.other_problems, dest="ar")
+        time.sleep(2)
+
+        self.other_problems = translation.text
+        self.bmi = round(self.weight / (self.height / 100)**2,2)
         today = date.today()
         if type(self.date_of_birth) is str:
             dt = [int(i) for i in self.date_of_birth.split("-")]
@@ -43,6 +66,8 @@ class Patient(models.Model):  # ONE
         self.age = today.year - dt.year - \
             ((today.month, today.day) <
              (dt.month, dt.day))
+
+        
         super(Patient, self).save(*args, **kwargs)
 
     def __setitem__(self, key, value):
@@ -80,6 +105,9 @@ class Appointment(models.Model):  # MANY
         choices=((i, i) for i in REASONS), max_length=64, blank=True, null=True)
     is_free = models.BooleanField(default=True)
     is_approved = models.BooleanField(default=False)
+
+    payment = models.IntegerField(blank=True, null=True)
+
     patient = models.ForeignKey(
         Patient, on_delete=models.CASCADE, null=True, blank=True)
 
