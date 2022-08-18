@@ -1,5 +1,7 @@
 from datetime import datetime, date
 from django.db import models
+
+from .middleware import ErrorHandler
 from .validators import validate_age, validate_date, validate_phone
 import time
 
@@ -43,7 +45,7 @@ class Patient(models.Model):  # ONE
     heart_problems = models.BooleanField(default=False)
     other_problems = models.TextField(max_length=264, blank=True, null=True)
                                     
-
+    @ErrorHandler
     def save(self, *args, **kwargs):
         """Overrides the save method of the model
         """
@@ -104,13 +106,13 @@ class Appointment(models.Model):  # MANY
     reason = models.CharField(
         choices=((i, i) for i in REASONS), max_length=64, blank=True, null=True)
     is_free = models.BooleanField(default=True)
-    is_approved = models.BooleanField(default=False)
 
     payment = models.IntegerField(blank=True, null=True)
 
     patient = models.ForeignKey(
         Patient, on_delete=models.CASCADE, null=True, blank=True)
-
+    
+    @ErrorHandler
     def save(self, *args, **kwargs):
         """Overrides the save method of the model mainly for validation
 
@@ -119,18 +121,17 @@ class Appointment(models.Model):  # MANY
                 ValueError: Exception is raised if date is not valid
 
         """
-        try:
+        
 
-            validate_date(self.year, self.month, self.day,
+        validate_date(self.year, self.month, self.day,
                           self.hour, self.minute)
 
-            self.name = datetime(self.year, self.month, self.day,
+        self.name = datetime(self.year, self.month, self.day,
                                  self.hour, self.minute).strftime("%A")
 
-            super(Appointment, self).save(*args, **kwargs)
+        super(Appointment, self).save(*args, **kwargs)
 
-        except ValueError:
-            raise Exception("Not a valid date!")
+
 
     def __setitem__(self, key, value):
         return setattr(self, key, value)

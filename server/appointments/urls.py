@@ -1,11 +1,11 @@
 from django.urls import path
-from .views import ListFreeView, AppointmentView, AddAppointmentView, ReserveView, ListReservedView
+from . import views
 
 
 urlpatterns = [
-    path("<str:pk>/reserve/", ReserveView.as_view()),
-    path("add/", AddAppointmentView.as_view()),
-    path("reserved/", ListReservedView.as_view()),
-    path("<str:pk>/", AppointmentView.as_view()),
-    path("", ListFreeView.as_view()),
+    path("", views.ListFreeView.as_view()),
+    path("add/", views.AppointmentView.as_view()),
+    path("reserved/", views.ListReservedView.as_view()),
+    path("<str:pk>/", views.AppointmentView.as_view()),
+    path("<str:pk>/reserve/", views.ReserveView.as_view())
 ]
