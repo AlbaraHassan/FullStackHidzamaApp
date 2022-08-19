@@ -32,8 +32,7 @@ class Patient(models.Model):  # ONE
     bmi = models.FloatField(blank=True)
 
 
-    phone_number = models.CharField(unique=True, max_length=16, validators=[
-                                    validate_phone])
+    phone_number = models.CharField(unique=True, max_length=16)
 
 
 
@@ -44,11 +43,26 @@ class Patient(models.Model):  # ONE
     thyroid_problems = models.BooleanField(default=False)
     heart_problems = models.BooleanField(default=False)
     other_problems = models.TextField(max_length=264, blank=True, null=True)
-                                    
+
+    
+    def clean(self):
+        dt = self.date_of_birth
+        today = date.today()
+
+        self.age = today.year - dt.year - \
+            ((today.month, today.day) <
+             (dt.month, dt.day))
+
+
+        validate_age(self.age)
+        validate_phone(self.phone_number)
+
+
     @ErrorHandler
     def save(self, *args, **kwargs):
         """Overrides the save method of the model
         """
+
         translator = Translator()
         translation = translator.translate(self.other_problems, dest="ar")
         time.sleep(2)
@@ -62,13 +76,13 @@ class Patient(models.Model):  # ONE
             self.age = today.year - dt.year - \
                 ((today.month, today.day) <
                  (dt.month, dt.day))
-            validate_age(self.age)
+            self.clean()
         else:
             dt = self.date_of_birth
-        self.age = today.year - dt.year - \
+            self.age = today.year - dt.year - \
             ((today.month, today.day) <
              (dt.month, dt.day))
-
+        
         
         super(Patient, self).save(*args, **kwargs)
 
@@ -112,6 +126,11 @@ class Appointment(models.Model):  # MANY
     patient = models.ForeignKey(
         Patient, on_delete=models.CASCADE, null=True, blank=True)
     
+    
+    def clean(self):
+        validate_date(self.year, self.month, self.day,
+                          self.hour, self.minute)
+
     @ErrorHandler
     def save(self, *args, **kwargs):
         """Overrides the save method of the model mainly for validation
@@ -123,8 +142,7 @@ class Appointment(models.Model):  # MANY
         """
         
 
-        validate_date(self.year, self.month, self.day,
-                          self.hour, self.minute)
+        self.clean()
 
         self.name = datetime(self.year, self.month, self.day,
                                  self.hour, self.minute).strftime("%A")

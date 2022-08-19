@@ -195,7 +195,7 @@ JAZZMIN_SETTINGS = {
         {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
 
         # external url that opens in a new window (Permissions can be added)
-        {"name": "Go To App", "url": "http://localhost:3000/appointments"},
+        {"name": "Go To App", "url": "http://localhost:8000/#/appointments"},
 
         # model admin to link to (Permissions checked against model)
         {"model": "auth.User"},

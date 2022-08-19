@@ -1,6 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_226_IM_USED
 from functools import wraps
+from django.core.exceptions import ValidationError
+
 
 def ErrorHandler(fun):
     @wraps(fun)
@@ -12,9 +14,9 @@ def ErrorHandler(fun):
 
             if(fun.__name__ == "save"):
                 if "duplicate key value" in e.args[0]:
-                    raise Exception("Phone number is used!", status=HTTP_226_IM_USED)
+                    raise ValidationError("Phone number is used!")
 
-                raise Exception(e.args[0])
+                raise ValidationError(e.args[0])
 
                 
 

@@ -1,16 +1,17 @@
 import datetime
 import phonenumbers
 from .codes import data
+from django.core.exceptions import ValidationError
 
 
 def validate_age(age):
     if age < 0:
-        raise Exception("Age is not acceptable!")
+        raise ValidationError("Age is not acceptable!")
 
 
 def validate_phone(phone_number):
     if len(phone_number) < 9:
-        raise Exception("Phone number is not valid!")
+        raise ValidationError("Phone number is not valid!")
     countries = list(data.keys())
     is_valid = []
     for i in countries:
@@ -20,10 +21,11 @@ def validate_phone(phone_number):
         except:
             pass
     if not any(is_valid):
-        raise Exception("Phone number is not valid!")
+        raise ValidationError("Phone number is not valid!")
 
 
 
 def validate_date(year, month, day, hour, minute):
+    
     if datetime.datetime(year,month,day,hour,minute) < datetime.datetime.now():
-        raise Exception("Date is not allowed!")
+        raise ValidationError("Date is not allowed!")

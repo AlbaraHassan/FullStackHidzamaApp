@@ -18,7 +18,7 @@ class ListFreeView(APIView):
     
 
 class ListReservedView(APIView):
-    def get(self,res):
+    def get(self, res):
         data = Appointment.objects.filter(**{"is_free": False})
         serializer = AppointmentSerializer(data, many=True)
         return Response(serializer.data)
@@ -28,6 +28,7 @@ class AppointmentView(APIView):
     
     @ErrorHandler
     def get(self, res, pk):
+
         dt = Appointment.objects.get(**{"id": pk})
         serializer = AppointmentSerializer(dt)
         return Response(serializer.data)
