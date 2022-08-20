@@ -147,11 +147,11 @@
         },
         "phonenumbers": {
             "hashes": [
-                "sha256:b945c1410d52448bb560a869e0a77af343422c96da55efbb2a44c5da38df299a",
-                "sha256:ebad336027f008eed8f2fe571ecb20c574c9c52f68b85ed2e2a2519d92ed318d"
+                "sha256:704676bb14b330eedaab1705ba77f52e5d8879249f222d8e639ef323face8303",
+                "sha256:ec1ac87bed33640ef85e0b00be44e247c65367e8b846d3d8d0a10e0fb7aae1b9"
             ],
             "index": "pypi",
-            "version": "==8.12.53"
+            "version": "==8.12.54"
         },
         "psycopg2": {
             "hashes": [

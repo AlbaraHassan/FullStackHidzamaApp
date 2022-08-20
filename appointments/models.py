@@ -46,12 +46,23 @@ class Patient(models.Model):  # ONE
 
     
     def clean(self):
-        dt = self.date_of_birth
-        today = date.today()
+        
+        if type(self.date_of_birth) is str:
+            today = date.today()
 
-        self.age = today.year - dt.year - \
-            ((today.month, today.day) <
-             (dt.month, dt.day))
+            dt = [int(i) for i in self.date_of_birth.split("-")]
+            dt = date(*dt)
+            self.age = today.year - dt.year - \
+                ((today.month, today.day) <
+                 (dt.month, dt.day))
+
+        else:
+            dt = self.date_of_birth
+            today = date.today()
+
+            self.age = today.year - dt.year - \
+                ((today.month, today.day) <
+                (dt.month, dt.day))
 
 
         validate_age(self.age)

@@ -15,6 +15,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Button from "@mui/material/Button"
 import { useNavigate } from 'react-router-dom';
 import axios from "axios"
+import Typography from '@mui/material/Typography'
+import ScheduleSendIcon from '@mui/icons-material/ScheduleSend';
+
+
 
 function AppointmentsTable() {
 
@@ -77,21 +81,23 @@ function AppointmentsTable() {
             </Dialog>
             <Container container justifyContent="center">
 
+                <Typography width={{ xs: "85%", sm: "95%", md: "95%" }} color="initial" sx={{ backgroundColor: "#0288d1", color: "white", padding: 3, borderRadius: 10, fontSize: { xs: 20, sm: 40, ms: 50 } }}>The Available Appointments</Typography>
 
                 <TableContainer component={Card}  >
-                    <Table sx={{ minWidth: 200, maxWidth: 1200 }} aria-label="sticky table">
+                    <Table sx={{ minWidth: 200, maxWidth: 1200, marginTop: 5 }} aria-label="sticky table">
                         <TableHead>
                             <TableRow sx={{
                                 backgroundColor: "#0288d1",
                                 "& th": {
-                                    fontSize: 30,
+                                    fontSize: {xs:20,sm:30},
                                     color: "white"
                                 }
                             }}
                             >
-                                <TableCell  >Date</TableCell>
                                 <TableCell align="center">Day</TableCell>
-                                <TableCell align="center">time</TableCell>
+                                <TableCell align="center" >Date & Time</TableCell>
+                                <TableCell align="center"></TableCell>
+
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -112,17 +118,23 @@ function AppointmentsTable() {
                                     }
                                     }
                                 >
-                                    <TableCell component="th" scope="row" sx={{ fontSize: { xs: 15, sm: 20, md: 25 } }}>
-                                        {`${row.year} / ${row.month} / ${row.day}`}
-                                    </TableCell>
+
                                     <TableCell align="center" sx={{ fontSize: { xs: 15, sm: 20, md: 25 } }}>{row.name}</TableCell>
-                                    <TableCell align="center" sx={{ fontSize: { xs: 15, sm: 20, md: 25 } }}>{`${row.hour < 10 ? "0" + row.hour : row.hour} : ${row.minute < 10 ? "0" + row.minute : row.minute}`}</TableCell>
+                                    <TableCell component="th" scope="row" align='center' sx={{ fontSize: { xs: 12, sm: 20, md: 25 } }}>
+                                        <p>{`${row.year} / ${row.month} / ${row.day}`}</p>
+                                        <p>{`${row.hour < 10 ? "0" + row.hour : row.hour} : ${row.minute < 10 ? "0" + row.minute : row.minute}`}</p>
+                                    </TableCell>
+                                    <TableCell align="center" sx={{ fontSize: { xs: 15, sm: 20, md: 25 }, width:5 }}>
+                                    <Button variant="outlined" color="info" endIcon={<ScheduleSendIcon />} sx={{height:{xs:30,md:100}, marginRight:{xs:0,md:10}, width:{xs:100, md:200}}}>
+                                        Reserve
+                                    </Button>
+                                </TableCell>
                                 </TableRow>
                             ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Container>
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </Container>
         </>
     )
 }

@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 
 function NavBar() {
     return (
-        <Box sx={{ flexGrow: 20, marginBottom:10 }} >
+        <Box sx={{ flexGrow: 20, marginBottom:10, width:"100%" }} >
             <AppBar position="static" color="info" variant="elevation">
                 <Toolbar>
                     <Typography

@@ -11,14 +11,14 @@ from .middleware import ErrorHandler
 
 
 class ListFreeView(APIView):
-    def get(self, res):
-        data = Appointment.objects.filter(**{"is_free": True})
-        serializer = AppointmentSerializer(data, many=True)
+    def get(self, req):
+        data =  Appointment.objects.filter(**{"is_free": True})
+        serializer =  AppointmentSerializer(data, many=True)
         return Response(serializer.data)
     
 
 class ListReservedView(APIView):
-    def get(self, res):
+    def get(self, req):
         data = Appointment.objects.filter(**{"is_free": False})
         serializer = AppointmentSerializer(data, many=True)
         return Response(serializer.data)
@@ -27,7 +27,7 @@ class ListReservedView(APIView):
 class AppointmentView(APIView):
     
     @ErrorHandler
-    def get(self, res, pk):
+    def get(self, req, pk):
 
         dt = Appointment.objects.get(**{"id": pk})
         serializer = AppointmentSerializer(dt)
@@ -52,6 +52,7 @@ class AppointmentView(APIView):
 
 
 class ReserveView(APIView):
+    authentication_classes = ()
 
     @ErrorHandler
     def post(self,req, pk):
