@@ -38,7 +38,7 @@ function AppointmentsTable() {
     }
 
     const fetchAll = async () => {
-        const res = await axios.get("http://localhost:8000/api/")
+        const res = await axios.get("api/")
         setRows(res.data)
     }
 
