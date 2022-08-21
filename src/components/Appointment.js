@@ -101,7 +101,7 @@ function Appointment() {
 
 
         }).catch((err) => {
-            setError(err.response.data.msg)
+            setError(err.response.data)
             setOpen(true)
             setLoading(false);
 
