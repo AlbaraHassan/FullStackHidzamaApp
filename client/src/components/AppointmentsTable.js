@@ -62,12 +62,14 @@ function AppointmentsTable() {
                 aria-labelledby="responsive-dialog-title"
             >
                 <DialogTitle id="responsive-dialog-title">
-                    {"Do you want to reserve the appointment?"}
+                    Do you want to reserve the appointment?
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        <p>{`Date: ${obj.year} / ${obj.month} / ${obj.day}`}</p>
-                        <p>{`Time: ${obj.hour < 10 ? "0" + obj.hour : obj.hour} : ${obj.minute < 10 ? "0" + obj.minute : obj.minute}`}</p>
+                        {`Date: ${obj.year} / ${obj.month} / ${obj.day}`}
+                    </DialogContentText>
+                    <DialogContentText>
+                        {`Time: ${obj.hour < 10 ? "0" + obj.hour : obj.hour} : ${obj.minute < 10 ? "0" + obj.minute : obj.minute}`}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -79,9 +81,9 @@ function AppointmentsTable() {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Container container justifyContent="center">
+            <Container >
 
-                <Typography width={{ xs: "85%", sm: "95%", md: "95%" }} color="initial" sx={{ backgroundColor: "#0288d1", color: "white", padding: 3, borderRadius: 10, fontSize: { xs: 20, sm: 40, ms: 50 } }}>The Available Appointments</Typography>
+                <Typography align='center' width={{ xs: "85%", sm: "95%", md: "95%" }} color="initial" sx={{ backgroundColor: "antiquewhite", color: "#0288d1", padding: 3, borderRadius: 6, fontSize: { xs: 20, sm: 40, ms: 50 } }}>The Available Appointments</Typography>
 
                 <TableContainer component={Card}  >
                     <Table sx={{ minWidth: 200, maxWidth: 1200, marginTop: 5 }} aria-label="sticky table">
@@ -89,7 +91,7 @@ function AppointmentsTable() {
                             <TableRow sx={{
                                 backgroundColor: "#0288d1",
                                 "& th": {
-                                    fontSize: {xs:20,sm:30},
+                                    fontSize: { xs: 20, sm: 30 },
                                     color: "white"
                                 }
                             }}
@@ -124,17 +126,17 @@ function AppointmentsTable() {
                                         <p>{`${row.year} / ${row.month} / ${row.day}`}</p>
                                         <p>{`${row.hour < 10 ? "0" + row.hour : row.hour} : ${row.minute < 10 ? "0" + row.minute : row.minute}`}</p>
                                     </TableCell>
-                                    <TableCell align="center" sx={{ fontSize: { xs: 15, sm: 20, md: 25 }, width:5 }}>
-                                    <Button variant="outlined" color="info" endIcon={<ScheduleSendIcon />} sx={{height:{xs:30,md:100}, marginRight:{xs:0,md:10}, width:{xs:100, md:200}}}>
-                                        Reserve
-                                    </Button>
-                                </TableCell>
+                                    <TableCell align="center" sx={{ fontSize: { xs: 15, sm: 20, md: 25 }, width: 5 }}>
+                                        <Button variant="outlined" color="info" endIcon={<ScheduleSendIcon />} sx={{ height: { xs: 30, md: 100 }, marginRight: { xs: 0, md: 10 }, width: { xs: 100, md: 200 } }}>
+                                            Reserve
+                                        </Button>
+                                    </TableCell>
                                 </TableRow>
                             ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-        </Container>
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Container>
         </>
     )
 }

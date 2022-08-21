@@ -70,7 +70,16 @@ class ReserveView(APIView):
 
             p = Patient.objects.get(
                     **{"name": patient["name"], "phone_number": patient["phone_number"]})
-            p["date_of_birth"] = patient["date_of_birth"]
+            p["anemia"] = patient["anemia"]
+            p["blood_sugar"] = patient["blood_sugar"]
+            p["kidney_problems"] = patient["kidney_problems"]
+            p["liver_problems"] = patient["liver_problems"]
+            p["thyroid_problems"] = patient["thyroid_problems"]
+            p["heart_problems"] = patient["heart_problems"]
+            p["other_problems"] = patient["other_problems"]
+            p["height"] = patient["height"]
+            p["weight"] = patient["weight"]
+
             date = Appointment.objects.get(**{"id": pk})
 
             if date["is_free"] == False:

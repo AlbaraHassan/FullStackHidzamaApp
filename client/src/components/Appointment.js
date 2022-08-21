@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from "axios"
 import Container from '@mui/material/Container'
 import FormControl from '@mui/material/FormControl'
@@ -19,17 +19,24 @@ import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
 import NavigationIcon from '@mui/icons-material/Navigation';
 import Fab from '@mui/material/Fab';
+import Snackbar from '@mui/material/Snackbar'
+import MuiAlert from "@mui/material/Alert"
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 
 
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 
 
 
 function Appointment() {
     const params = useParams();
+    // eslint-disable-next-line no-unused-vars
     const [ appointment, setAppointment ] = useState({})
     const [ fullName, setFullName ] = useState("")
     const [ dob, setDob ] = useState("")
@@ -43,8 +50,17 @@ function Appointment() {
     const [ thyrodProb, setThyrodProb ] = useState(false)
     const [ HeartProb, setHeartProb ] = useState(false)
     const [ otherProb, setOtherProb ] = useState("")
+    const [ error, setError ] = useState("")
 
     const [ reason, setReason ] = useState("")
+
+    const [ open, setOpen ] = useState(false);
+    const [ open2, setOpen2 ] = useState(false);
+
+    const [ loading, setLoading ] = useState(false)
+
+
+    const navigate = useNavigate()
 
 
     const handleDob = (date) => {
@@ -59,6 +75,7 @@ function Appointment() {
     }
 
     const reserver = async () => {
+        setLoading(true);
         const body = {
 
             "name": fullName,
@@ -76,13 +93,22 @@ function Appointment() {
             "other_problems": otherProb
 
         }
-        console.log(body);
-        const res = await axios.post(`http://localhost:8000/api/${params.id}/reserve/`, body, {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
+        await axios.post(`http://localhost:8000/api/${params.id}/reserve/`, body).then((res) => {
+            setError("Reservation Compelete!")
+            setOpen2(true)
+            setLoading(false);
+            setTimeout(() => { navigate("/") }, 1000)
+
+
+        }).catch((err) => {
+            setError(err.response.data.msg)
+            setOpen(true)
+            setLoading(false);
+
         })
+
+
+
     }
 
 
@@ -123,7 +149,7 @@ function Appointment() {
 
                 <FormHelperText sx={{ marginButtom: 5 }}>Enter You Date Of Birth</FormHelperText>
 
-                <Typography variant="h4" color="initial" sx={{marginTop:5}}>{height} cm</Typography>
+                <Typography variant="h4" color="initial" sx={{ marginTop: 5 }}>{height} cm</Typography>
 
                 <Slider
                     value={height}
@@ -138,7 +164,7 @@ function Appointment() {
 
                 <FormHelperText sx={{ marginButtom: 5 }}>Enter You Height In cm</FormHelperText>
 
-                <Typography variant="h4" color="initial" sx={{marginTop:5}}>{weight} kg</Typography>
+                <Typography variant="h4" color="initial" sx={{ marginTop: 5 }}>{weight} kg</Typography>
 
 
                 <Slider
@@ -155,16 +181,32 @@ function Appointment() {
                 <FormHelperText sx={{ marginButtom: 5 }}>Enter You Weight in kg</FormHelperText>
 
                 <TextField
+
                     error={phone.length < 9 && phone ? true : false}
                     id="outlined-error-helper-text"
+                    type={"number"}
                     label="Phone Number"
                     value={phone}
                     onChange={(e) => { setPhone(e.target.value) }}
-                    sx={{ marginTop: 10 }}
+                    sx={{
+                        marginTop: 10, input: {
+                            '&[type=number]': {
+                                '-moz-appearance': 'textfield',
+                            },
+                            '&::-webkit-outer-spin-button': {
+                                '-webkit-appearance': 'none',
+                                margin: 0,
+                            },
+                            '&::-webkit-inner-spin-button': {
+                                '-webkit-appearance': 'none',
+                                margin: 0,
+                            },
+                        }
+                    }}
                     helperText={phone.length < 9 && phone ? "Phone number is too short" : ""}
 
                 />
-                <FormHelperText sx={{ marginBottom: 5 }}>Enter You Full Name</FormHelperText>
+                <FormHelperText sx={{ marginBottom: 5 }}>Enter You Phone Number</FormHelperText>
 
 
                 <FormControl fullWidth>
@@ -214,11 +256,34 @@ function Appointment() {
 
                 />
 
-                <Fab variant="extended" color="primary" aria-label="add" onClick={reserver}>
-                    <NavigationIcon sx={{ mr: 1 }} />
-                    Extended
+                <Fab variant="extended" color="primary" aria-label="add" onClick={reserver}
+                    disabled={loading ? true : false}>
+                    {loading ? <CircularProgress /> : <NavigationIcon sx={{ mr: 1 }} />}
+
+                    Submit
                 </Fab>
             </FormControl>
+
+
+            <Snackbar
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                open={open}
+                onClose={() => { setOpen(false) }}>
+                <Alert onClose={() => { setOpen(false) }} severity="error">
+                    {error}
+                </Alert>
+            </Snackbar>
+
+
+            <Snackbar
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                open={open2}
+                onClose={() => { setOpen2(false) }}>
+                <Alert onClose={() => { setOpen2(false) }} severity="success">
+                    {error}
+                </Alert>
+            </Snackbar>
+
         </Container>
     )
 }
