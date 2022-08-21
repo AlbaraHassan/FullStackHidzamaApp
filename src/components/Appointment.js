@@ -93,15 +93,15 @@ function Appointment() {
             "other_problems": otherProb
 
         }
-        await axios.post(`http://localhost:8000/api/${params.id}/reserve/`, body).then((res) => {
+        await axios.post(`http://localhost:8000/api/${params.id}/reserve/`, body).then(async(res) => {
             setError("Reservation Compelete!")
             setOpen2(true)
             setLoading(false);
             setTimeout(() => { navigate("/") }, 1000)
 
 
-        }).catch((err) => {
-            setError(err.response.data)
+        }).catch(async(err) => {
+            setError(await err.response.data.msg)
             setOpen(true)
             setLoading(false);
 
