@@ -78,7 +78,7 @@ class Patient(models.Model):  # ONE
             translator = Translator()
             translation = translator.translate(self.other_problems, dest="ar")
             time.sleep(2)
-            self.other_problems =f"(Original) {self.other_problems}\n\n(Arabic) {translation.text}" 
+            self.other_problems = translation.text
         self.bmi = round(self.weight / (self.height / 100)**2,2)
         today = date.today()
         if type(self.date_of_birth) is str:
