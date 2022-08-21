@@ -204,7 +204,7 @@ JAZZMIN_SETTINGS = {
         {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
 
         # external url that opens in a new window (Permissions can be added)
-        {"name": "Go To App", "url": "http://localhost:8000/#/"},
+        {"name": "Go To App", "url": "https://hidzama.herokuapp.com/"},
 
         # model admin to link to (Permissions checked against model)
         {"model": "auth.User"},
