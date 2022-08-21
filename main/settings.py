@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRETE_KEY")
+SECRET_KEY = "SECRETE_KEY"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -94,7 +94,6 @@ DATABASES = {
     }
 }
 
-DATABASES["default"] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
 
 # Password validation
@@ -130,7 +129,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "client/build/static"
@@ -209,4 +209,3 @@ JAZZMIN_SETTINGS = {
     ],
 }
 
-django_heroku.settings(locals())
