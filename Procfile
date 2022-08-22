@@ -1,2 +1,2 @@
 release: python manage.py migrate
-web: python manage.py runserver --insecure
+web: gunicorn main.wsgi --log-file -
