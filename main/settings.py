@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 import django_heroku
-import dj_database_url
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "SECRETE_KEY"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -34,17 +33,17 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
-                  "jazzmin",
-                  'django.contrib.admin',
-                  'django.contrib.auth',
-                  'django.contrib.contenttypes',
-                  'django.contrib.sessions',
-                  'django.contrib.messages',
-                  'django.contrib.staticfiles',
-                  "rest_framework",
-                  "corsheaders",
-                  "appointments"
-                  ]
+    "jazzmin",
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    "rest_framework",
+    "corsheaders",
+    "appointments",
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -95,7 +94,6 @@ DATABASES = {
 }
 
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -129,12 +127,14 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage' 
-STATIC_URL = 'static/'
+
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "build/static"
 ]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 django_heroku.settings(locals())
 
@@ -144,7 +144,7 @@ django_heroku.settings(locals())
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#Email Settings
+# Email Settings
 
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = "587"
@@ -153,12 +153,12 @@ EMAIL_HOST_PASSWORD = "gztjrzqbqblgvpoj"
 EMAIL_USE_TLS = True
 # EMAIL_USE_SSL = False
 
-#CORS
+# CORS
 
 CORS_ORIGIN_ALLOW_ALL = True
 
 
-#JAZZMIN
+# JAZZMIN
 
 JAZZMIN_UI_TWEAKS = {
     "navbar_small_text": False,
@@ -201,7 +201,8 @@ JAZZMIN_SETTINGS = {
     "topmenu_links": [
 
         # Url that gets reversed (Permissions can be added)
-        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Home",  "url": "admin:index",
+            "permissions": ["auth.view_user"]},
 
         # external url that opens in a new window (Permissions can be added)
         {"name": "Go To App", "url": "https://hidzama.herokuapp.com/"},
@@ -211,4 +212,3 @@ JAZZMIN_SETTINGS = {
 
     ],
 }
-

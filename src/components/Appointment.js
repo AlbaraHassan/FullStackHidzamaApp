@@ -22,6 +22,7 @@ import Fab from '@mui/material/Fab';
 import Snackbar from '@mui/material/Snackbar'
 import MuiAlert from "@mui/material/Alert"
 import CircularProgress from '@mui/material/CircularProgress';
+import Backdrop from '@mui/material/Backdrop';
 
 
 
@@ -40,8 +41,8 @@ function Appointment() {
     const [ appointment, setAppointment ] = useState({})
     const [ fullName, setFullName ] = useState("")
     const [ dob, setDob ] = useState("")
-    const [ height, setHeight ] = useState(0)
-    const [ weight, setWeight ] = useState(0)
+    const [ height, setHeight ] = useState(50)
+    const [ weight, setWeight ] = useState(5)
     const [ phone, setPhone ] = useState("")
     const [ anemia, setAnemia ] = useState(false)
     const [ bloodSugar, setBloodSugar ] = useState(false)
@@ -51,12 +52,9 @@ function Appointment() {
     const [ HeartProb, setHeartProb ] = useState(false)
     const [ otherProb, setOtherProb ] = useState("")
     const [ error, setError ] = useState("")
-
     const [ reason, setReason ] = useState("")
-
     const [ open, setOpen ] = useState(false);
     const [ open2, setOpen2 ] = useState(false);
-
     const [ loading, setLoading ] = useState(false)
 
 
@@ -75,6 +73,14 @@ function Appointment() {
     }
 
     const reserver = async () => {
+
+        if (fullName === "" || phone === "" || dob === "") {
+            setError("Please entered all the required info")
+            setOpen(true)
+            return
+        }
+
+
         setLoading(true);
         const body = {
 
@@ -93,14 +99,14 @@ function Appointment() {
             "other_problems": otherProb
 
         }
-        await axios.post(`api/${params.id}/reserve/`, body).then(async(res) => {
+        await axios.post(`api/${params.id}/reserve/`, body).then(async (res) => {
             setError("Reservation Compelete!")
             setOpen2(true)
             setLoading(false);
             setTimeout(() => { navigate("/") }, 1000)
 
 
-        }).catch(async(err) => {
+        }).catch(async (err) => {
             setError(await err.response.data.msg)
             setOpen(true)
             setLoading(false);
@@ -125,6 +131,7 @@ function Appointment() {
             <FormControl sx={{ width: { xs: 300, sm: 800, md: 1000 } }}>
                 <FormLabel sx={{ fontSize: 25 }}>Add Your Information</FormLabel>
                 <TextField
+                    required
                     error={fullName.length < 4 && fullName ? true : false}
                     id="outlined-error-helper-text"
                     label="Full Name"
@@ -137,6 +144,7 @@ function Appointment() {
 
                 <LocalizationProvider dateAdapter={AdapterMoment}>
                     <MobileDatePicker
+
                         label="Date of Birth"
                         inputFormat="yyyy-MM-dd"
                         value={dob}
@@ -172,7 +180,7 @@ function Appointment() {
                     onChange={(e) => { setWeight(e.target.value) }}
                     valueLabelDisplay="auto"
                     size="medium"
-                    min={0}
+                    min={5}
                     max={250}
                     sx={{ marginTop: 5, width: { xs: "100%", md: "59.5%" } }}
 
@@ -181,7 +189,7 @@ function Appointment() {
                 <FormHelperText sx={{ marginButtom: 5 }}>Enter You Weight in kg</FormHelperText>
 
                 <TextField
-
+                    required
                     error={phone.length < 9 && phone ? true : false}
                     id="outlined-error-helper-text"
                     type={"number"}
@@ -210,7 +218,7 @@ function Appointment() {
 
 
                 <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">Reason</InputLabel>
+                    <InputLabel>Reason</InputLabel>
                     <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
@@ -258,7 +266,7 @@ function Appointment() {
 
                 <Fab variant="extended" color="primary" aria-label="add" onClick={reserver}
                     disabled={loading ? true : false}>
-                    {loading ? <CircularProgress /> : <NavigationIcon sx={{ mr: 1 }} />}
+                    <NavigationIcon sx={{ mr: 1 }} />
 
                     Submit
                 </Fab>
@@ -284,7 +292,15 @@ function Appointment() {
                 </Alert>
             </Snackbar>
 
-        </Container>
+
+            <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={loading}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
+
+
+        </Container >
     )
 }
 
