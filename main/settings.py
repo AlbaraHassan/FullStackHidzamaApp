@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
-import django_heroku
+# import django_heroku
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -86,10 +86,10 @@ WSGI_APPLICATION = 'main.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': "appointments",
-        "USER": "postgres",
-        "PASSWORD": "braa1234",
-        "HOST": "localhost"
+        'NAME': "d2tsc1gk8avsqo",
+        "USER": "mxymlyebidqqzb",
+        "PASSWORD": "798f5f5020cf4514b8bcbf1a49916233c9bd949092d54e6bfa7e4e755545f970",
+        "HOST": "ec2-34-241-90-235.eu-west-1.compute.amazonaws.com"
     }
 }
 
@@ -134,7 +134,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "build/static"
 ]
-# STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # django_heroku.settings(locals())
 
