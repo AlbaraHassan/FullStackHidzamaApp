@@ -186,7 +186,7 @@ function Appointment() {
 
                 <FormHelperText sx={{ marginButtom: 5 }}>Enter You Height In cm</FormHelperText>
 
-                <Typography variant="h5" color={!weight ? "red" : "gray"} sx={{ marginTop: 5}}>{weight ? `${weight} cm` : "Weight *"}</Typography>
+                <Typography variant="h5" color={!weight ? "red" : "gray"} sx={{ marginTop: 5}}>{weight ? `${weight} kg` : "Weight *"}</Typography>
 
 
                 <Slider
