@@ -23,7 +23,9 @@ import Snackbar from '@mui/material/Snackbar'
 import MuiAlert from "@mui/material/Alert"
 import CircularProgress from '@mui/material/CircularProgress';
 import Backdrop from '@mui/material/Backdrop';
-
+import PhoneInput from 'react-phone-input-2';
+import "../styles/input_phone.css"
+import { checkIfValidPhoneNumber } from '../validation/regex';
 
 
 
@@ -41,8 +43,8 @@ function Appointment() {
     const [ appointment, setAppointment ] = useState({})
     const [ fullName, setFullName ] = useState("")
     const [ dob, setDob ] = useState("")
-    const [ height, setHeight ] = useState(50)
-    const [ weight, setWeight ] = useState(5)
+    const [ height, setHeight ] = useState(false)
+    const [ weight, setWeight ] = useState(false)
     const [ phone, setPhone ] = useState("")
     const [ anemia, setAnemia ] = useState(false)
     const [ bloodSugar, setBloodSugar ] = useState(false)
@@ -56,9 +58,22 @@ function Appointment() {
     const [ open, setOpen ] = useState(false);
     const [ open2, setOpen2 ] = useState(false);
     const [ loading, setLoading ] = useState(false)
-
-
+    const [ notValid, setNotValid ] = useState('');
     const navigate = useNavigate()
+
+
+
+    const handleValidation = (e) => {
+        if (!checkIfValidPhoneNumber(e)) {
+            setNotValid('Incorrect phone number format!');
+            return
+        }
+
+        setNotValid('');
+        setPhone(e)
+
+    }
+
 
 
     const handleDob = (date) => {
@@ -127,12 +142,13 @@ function Appointment() {
 
 
     return (
-        <Container maxWidth="lg">
-            <FormControl sx={{ width: { xs: 300, sm: 800, md: 1000 } }}>
+        <Container maxWidth="lg" sx={{backgroundColor:"whitesmoke", padding:5, borderRadius:10}}>
+
+            <FormControl sx={{ width: "100%" }}>
                 <FormLabel sx={{ fontSize: 25 }}>Add Your Information</FormLabel>
                 <TextField
                     required
-                    error={fullName.length < 4 && fullName ? true : false}
+                    error={fullName.length < 6 || !fullName ? true : false}
                     id="outlined-error-helper-text"
                     label="Full Name"
                     value={fullName}
@@ -144,20 +160,18 @@ function Appointment() {
 
                 <LocalizationProvider dateAdapter={AdapterMoment}>
                     <MobileDatePicker
-
-                        label="Date of Birth"
+                        label="Date of Birth *"
                         inputFormat="yyyy-MM-dd"
                         value={dob}
                         onChange={handleDob}
                         renderInput={(params) => <TextField {...params} />}
-
                     />
 
                 </LocalizationProvider>
 
                 <FormHelperText sx={{ marginButtom: 5 }}>Enter You Date Of Birth</FormHelperText>
 
-                <Typography variant="h4" color="initial" sx={{ marginTop: 5 }}>{height} cm</Typography>
+                <Typography variant="h5" color={!height ? "red" : "gray"} sx={{ marginTop: 5 }}>{height ? `${height} cm` : "Height *"}</Typography>
 
                 <Slider
                     value={height}
@@ -172,7 +186,7 @@ function Appointment() {
 
                 <FormHelperText sx={{ marginButtom: 5 }}>Enter You Height In cm</FormHelperText>
 
-                <Typography variant="h4" color="initial" sx={{ marginTop: 5 }}>{weight} kg</Typography>
+                <Typography variant="h5" color={!weight ? "red" : "gray"} sx={{ marginTop: 5}}>{weight ? `${weight} cm` : "Weight *"}</Typography>
 
 
                 <Slider
@@ -185,46 +199,35 @@ function Appointment() {
                     sx={{ marginTop: 5, width: { xs: "100%", md: "59.5%" } }}
 
                 />
-
                 <FormHelperText sx={{ marginButtom: 5 }}>Enter You Weight in kg</FormHelperText>
-
-                <TextField
-                    required
-                    error={phone.length < 9 && phone ? true : false}
-                    id="outlined-error-helper-text"
-                    type={"number"}
-                    label="Phone Number"
-                    value={phone}
-                    onChange={(e) => { setPhone(e.target.value) }}
-                    sx={{
-                        marginTop: 10, input: {
-                            '&[type=number]': {
-                                '-moz-appearance': 'textfield',
-                            },
-                            '&::-webkit-outer-spin-button': {
-                                '-webkit-appearance': 'none',
-                                margin: 0,
-                            },
-                            '&::-webkit-inner-spin-button': {
-                                '-webkit-appearance': 'none',
-                                margin: 0,
-                            },
-                        }
-                    }}
-                    helperText={phone.length < 9 && phone ? "Phone number is too short" : ""}
-
-                />
+                <Container sx={{ marginTop: 5 }} width={"80%"}>
+                    <PhoneInput
+                        inputStyle={{
+                            width: '100%',
+                            height: 56,
+                            borderColor: notValid !== "" || !phone ? "red" : "",
+                            backgroundColor:"whitesmoke"
+                        }}
+                        country={'ba'}
+                        value={phone}
+                        onChange={(a) => { handleValidation('+' + a) }}
+                    />
+                </Container>
+                {notValid !== '' && <FormHelperText sx={{ marginBottom: 5, color: "red" }}>{notValid}</FormHelperText>}
                 <FormHelperText sx={{ marginBottom: 5 }}>Enter You Phone Number</FormHelperText>
 
 
-                <FormControl fullWidth>
-                    <InputLabel>Reason</InputLabel>
+
+
+                <FormControl fullWidth error={!reason?true:false}>
+                    <InputLabel>Reason *</InputLabel>
                     <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
+                        labelId="demo-simple-select-error-label"
+                        id="demo-simple-select-error"
                         value={reason}
                         label="Age"
                         onChange={(e) => { setReason(e.target.value) }}
+                    
                     >
                         <MenuItem value="General">General</MenuItem>
                         <MenuItem value="Respiratory System">Respiratory System</MenuItem>

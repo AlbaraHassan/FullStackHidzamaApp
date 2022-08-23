@@ -14,7 +14,7 @@ function NavBar() {
                         variant="h3"
                         noWrap
                         component="div"
-                        sx={{ flexGrow: 20, display: { xs: '-ms-flexbox', sm: 'block' }, padding:2}}
+                        sx={{ flexGrow: 20, display: { xs: '-ms-flexbox', sm: 'block' }, padding:2, fontSize:{xs:35, sm:40}}}
                     >
                         Hizdama App
                     </Typography>

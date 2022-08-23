@@ -16,6 +16,7 @@
         "moment": "^2.29.4",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
+        "react-phone-input-2": "^2.15.1",
         "react-router-dom": "^6.3.0",
         "react-scripts": "5.0.1",
         "web-vitals": "^2.1.4"
@@ -27,8 +28,8 @@
         "eject": "react-scripts eject"
     },
     "engines": {
-        "node":"16.16.0",
-        "npm":"8.12.1"
+        "node": "16.16.0",
+        "npm": "8.12.1"
     },
     "eslintConfig": {
         "extends": [
